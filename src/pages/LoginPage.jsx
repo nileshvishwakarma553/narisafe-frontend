@@ -114,36 +114,6 @@ const LoginPage = () => {
           </button>
         </form>
 
-        {/* Demo Quick-Login Pills */}
-        <div className="mt-6 pt-6 border-t border-slate-100">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mb-2.5">
-            Quick One-Click Demo Logins:
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => handleDemoFill('priya@narisafe.org', 'User@123')}
-              className="py-1.5 px-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-[11px] font-bold border border-purple-200 transition"
-            >
-              👩 User
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoFill('rajesh@narisafe.org', 'Guardian@123')}
-              className="py-1.5 px-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[11px] font-bold border border-indigo-200 transition"
-            >
-              🛡️ Guardian
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoFill('admin@narisafe.org', 'Admin@123')}
-              className="py-1.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold border border-slate-200 transition"
-            >
-              ⚡ Admin
-            </button>
-          </div>
-        </div>
-
         <p className="text-center text-xs text-slate-500 mt-6">
           Don't have an account yet?{' '}
           <Link to="/register" className="font-bold text-purple-700 hover:underline">

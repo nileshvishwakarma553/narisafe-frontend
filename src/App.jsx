@@ -78,13 +78,62 @@ const App = () => {
         }
       >
         {/* User Hub */}
-        <Route path="/dashboard" element={<UserDashboard />} />
-        <Route path="/contacts" element={<EmergencyContactsPage />} />
-        <Route path="/live-location" element={<LiveLocationPage />} />
-        <Route path="/safer-routes" element={<SaferRoutePage />} />
-        <Route path="/safe-places" element={<NearbySafePlacesPage />} />
-        <Route path="/report-incident" element={<IncidentReportPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/contacts"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <EmergencyContactsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/live-location"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <LiveLocationPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/safer-routes"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'guardian', 'admin']}>
+              <SaferRoutePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/safe-places"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'guardian', 'admin']}>
+              <NearbySafePlacesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/report-incident"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'guardian', 'admin']}>
+              <IncidentReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'guardian', 'admin']}>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Guardian Suite */}
         <Route
