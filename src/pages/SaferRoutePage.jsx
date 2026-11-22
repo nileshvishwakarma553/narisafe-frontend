@@ -9,28 +9,53 @@ import {
   Building,
   Info,
   CheckCircle2,
+  LocateFixed,
 } from 'lucide-react';
 import InteractiveMap from '../components/InteractiveMap';
 import api from '../services/api';
+import { getRealLocation } from '../utils/locationHelper';
 
 const SaferRoutePage = () => {
-  const [origin, setOrigin] = useState('Connaught Place Inner Circle, New Delhi');
-  const [destination, setDestination] = useState('South Extension Market Block B, New Delhi');
+  const [origin, setOrigin] = useState('Detecting current location...');
+  const [originCoords, setOriginCoords] = useState(null);
+  const [destination, setDestination] = useState('Railway Station');
   const [routes, setRoutes] = useState([]);
   const [selectedRouteIdx, setSelectedRouteIdx] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [detectingLocation, setDetectingLocation] = useState(true);
   const [disclaimer, setDisclaimer] = useState('');
 
-  const handleSearchRoutes = async (e) => {
-    if (e) e.preventDefault();
-    setLoading(true);
+  // Auto-detect user current location on mount
+  useEffect(() => {
+    const initOrigin = async () => {
+      try {
+        setDetectingLocation(true);
+        const loc = await getRealLocation();
+        const displayAddr = loc.address || `${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}`;
+        setOrigin(displayAddr);
+        setOriginCoords({ lat: loc.lat, lng: loc.lng });
+        // Automatically fetch routes with user's detected location
+        fetchSaferRoutes(displayAddr, { lat: loc.lat, lng: loc.lng }, destination);
+      } catch (err) {
+        console.error('Failed to resolve current location for route:', err);
+        setOrigin('Connaught Place Inner Circle, New Delhi');
+        setOriginCoords({ lat: 28.6315, lng: 77.2167 });
+        fetchSaferRoutes('Connaught Place Inner Circle, New Delhi', { lat: 28.6315, lng: 77.2167 }, destination);
+      } finally {
+        setDetectingLocation(false);
+      }
+    };
 
+    initOrigin();
+  }, []);
+
+  const fetchSaferRoutes = async (startAddr, startCoords, endAddr) => {
+    setLoading(true);
     try {
       const res = await api.post('/routes/safer-route', {
-        origin,
-        destination,
-        originCoords: { lat: 28.6315, lng: 77.2167 },
-        destinationCoords: { lat: 28.5683, lng: 77.2225 },
+        origin: startAddr || origin,
+        destination: endAddr || destination,
+        originCoords: startCoords || originCoords || { lat: 28.6315, lng: 77.2167 },
       });
 
       if (res.data.success) {
@@ -45,9 +70,22 @@ const SaferRoutePage = () => {
     }
   };
 
-  useEffect(() => {
-    handleSearchRoutes();
-  }, []);
+  const handleSearchRoutes = async (e) => {
+    if (e) e.preventDefault();
+    fetchSaferRoutes(origin, originCoords, destination);
+  };
+
+  const handleUseCurrentLocation = async () => {
+    try {
+      setDetectingLocation(true);
+      const loc = await getRealLocation();
+      const displayAddr = loc.address || `${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}`;
+      setOrigin(displayAddr);
+      setOriginCoords({ lat: loc.lat, lng: loc.lng });
+    } finally {
+      setDetectingLocation(false);
+    }
+  };
 
   const activeRoute = routes[selectedRouteIdx];
 
@@ -67,9 +105,20 @@ const SaferRoutePage = () => {
       <form onSubmit={handleSearchRoutes} className="bg-white rounded-3xl p-5 shadow-soft-sm border border-slate-100">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-wider">
-              Starting Location (Origin)
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Starting Location (Origin)
+              </label>
+              <button
+                type="button"
+                onClick={handleUseCurrentLocation}
+                disabled={detectingLocation}
+                className="text-[11px] font-bold text-purple-700 hover:text-purple-900 flex items-center gap-1 transition"
+              >
+                <LocateFixed className="w-3.5 h-3.5" />
+                {detectingLocation ? 'Locating...' : 'Use Current Location'}
+              </button>
+            </div>
             <div className="relative">
               <Navigation className="w-4 h-4 text-purple-600 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -192,7 +241,8 @@ const SaferRoutePage = () => {
         </div>
 
         <InteractiveMap
-          center={{ lat: 28.6000, lng: 77.2190 }}
+          center={originCoords || { lat: 28.6000, lng: 77.2190 }}
+          userLocation={originCoords}
           routes={routes}
           selectedRouteIndex={selectedRouteIdx}
           height="420px"

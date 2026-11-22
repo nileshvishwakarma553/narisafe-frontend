@@ -12,8 +12,10 @@ import {
   Send,
   UserCheck,
   AlertCircle,
+  MessageSquare,
 } from 'lucide-react';
 import api from '../services/api';
+import { getRealLocation } from '../utils/locationHelper';
 
 const EmergencyContactsPage = () => {
   const [contacts, setContacts] = useState([]);
@@ -35,6 +37,39 @@ const EmergencyContactsPage = () => {
   // Form state for inviting guardian
   const [guardianIdentifier, setGuardianIdentifier] = useState('');
   const [guardianRelation, setGuardianRelation] = useState('Guardian');
+
+  // Intelligent SMS dispatcher supporting both Native SMS app and WhatsApp instant dispatch
+  const handleSendEmergencySMS = async (contact) => {
+    try {
+      const cleanPhone = (contact.phone || '').replace(/[^0-9+]/g, '');
+      const loc = await getRealLocation();
+      const mapsUrl = `https://maps.google.com/?q=${loc.lat},${loc.lng}`;
+      const message = `🚨 EMERGENCY ALERT from NariSafe!\nI need urgent help.\nMy live location: ${mapsUrl} (${loc.address || 'GPS coordinates'})\nPlease assist immediately.`;
+      const encodedMsg = encodeURIComponent(message);
+
+      // Detect if user is on iOS, Android, or Desktop
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // iOS requires ';' delimiter for body; Android uses '?'
+        const smsUri = isIOS
+          ? `sms:${cleanPhone}&body=${encodedMsg}`
+          : `sms:${cleanPhone}?body=${encodedMsg}`;
+        window.location.href = smsUri;
+      } else {
+        // On Desktop / Laptop: open WhatsApp Web or Web SMS dialer with prefilled message
+        const waPhone = cleanPhone.replace(/^\+/, '');
+        const waUrl = `https://wa.me/${waPhone}?text=${encodedMsg}`;
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+      }
+    } catch (e) {
+      console.error('Failed to trigger SMS dispatch:', e);
+      // Fallback: standard SMS protocol
+      const cleanPhone = (contact.phone || '').replace(/[^0-9+]/g, '');
+      window.location.href = `sms:${cleanPhone}?body=${encodeURIComponent('EMERGENCY: I need urgent help. Please contact me.')}`;
+    }
+  };
 
   const fetchContactsAndGuardians = async () => {
     setLoading(true);
@@ -258,13 +293,14 @@ const EmergencyContactsPage = () => {
                     >
                       <Phone className="w-3.5 h-3.5" /> Call
                     </a>
-                    <a
-                      href={`sms:${contact.phone}?body=EMERGENCY: I need assistance. Please check on me.`}
-                      className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5"
-                      title="Send SMS"
+                    <button
+                      type="button"
+                      onClick={() => handleSendEmergencySMS(contact)}
+                      className="p-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition flex items-center gap-1.5 border border-rose-200"
+                      title="Send Instant Emergency SMS & Live Location"
                     >
-                      <Send className="w-3.5 h-3.5" /> SMS
-                    </a>
+                      <Send className="w-3.5 h-3.5" /> SMS / Alert
+                    </button>
                   </div>
 
                   <div className="flex items-center gap-1">

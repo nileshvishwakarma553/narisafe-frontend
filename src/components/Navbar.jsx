@@ -70,9 +70,11 @@ const Navbar = ({ onToggleSidebar }) => {
             )}
 
             <Link to={user ? (user.role === 'admin' ? '/admin/dashboard' : user.role === 'guardian' ? '/guardian/dashboard' : '/dashboard') : '/'} className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-purple-800 to-violet-600 flex items-center justify-center text-white shadow-primary-glow">
-                <Shield className="w-5 h-5" />
-              </div>
+              <img
+                src="/narisafe-logo.png"
+                alt="NariSafe Logo"
+                className="w-9 h-9 rounded-2xl object-contain shadow-soft-sm bg-white"
+              />
               <div>
                 <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-purple-900 via-purple-800 to-violet-700 bg-clip-text text-transparent">
                   NariSafe

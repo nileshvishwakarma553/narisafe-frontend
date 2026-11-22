@@ -71,9 +71,11 @@ const RegisterPage = () => {
       <div className="max-w-lg w-full bg-white rounded-3xl p-8 sm:p-10 shadow-soft-lg border border-slate-100">
         <div className="text-center mb-6">
           <Link to="/" className="inline-flex items-center gap-2 mb-2">
-            <div className="w-10 h-10 rounded-2xl bg-purple-700 flex items-center justify-center text-white shadow-primary-glow">
-              <Shield className="w-5 h-5" />
-            </div>
+            <img
+              src="/narisafe-logo.png"
+              alt="NariSafe Logo"
+              className="w-12 h-12 rounded-2xl object-contain shadow-soft-sm bg-white"
+            />
             <span className="text-2xl font-black text-slate-900">NariSafe</span>
           </Link>
           <h2 className="text-xl font-bold text-slate-900">Create Safety Account</h2>

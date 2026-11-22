@@ -69,9 +69,11 @@ const LandingPage = () => {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-soft-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-800 to-violet-600 flex items-center justify-center text-white shadow-primary-glow">
-              <Shield className="w-5 h-5" />
-            </div>
+            <img
+              src="/narisafe-logo.png"
+              alt="NariSafe Logo"
+              className="w-10 h-10 rounded-2xl object-contain shadow-soft-sm bg-white"
+            />
             <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-purple-900 to-violet-700 bg-clip-text text-transparent">
               NariSafe
             </span>
