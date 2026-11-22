@@ -83,11 +83,10 @@ const InteractiveMap = ({
         zoomControl: true,
       });
 
-      // High-performance, 100% reliable OpenStreetMap CartoDB Positron / OSM tiles (never blocked or billable)
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      // 100% Free, Official OpenStreetMap Standard Tile Server (Requires NO API key, completely free & open-source)
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19,
-        subdomains: 'abcd',
       }).addTo(map);
 
       markersLayerRef.current = L.layerGroup().addTo(map);
