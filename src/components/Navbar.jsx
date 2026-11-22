@@ -11,13 +11,16 @@ import {
   Radio,
   AlertTriangle,
   PhoneCall,
+  Languages,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const Navbar = ({ onToggleSidebar }) => {
   const { user, logout } = useAuth();
   const { activeAlerts } = useSocket();
+  const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -33,7 +36,7 @@ const Navbar = ({ onToggleSidebar }) => {
       return (
         <span className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-3 py-1 rounded-full animate-pulse">
           <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
-          EMERGENCY ACTIVE
+          {t.statusEmergency}
         </span>
       );
     }
@@ -41,14 +44,14 @@ const Navbar = ({ onToggleSidebar }) => {
       return (
         <span className="flex items-center gap-1.5 text-xs font-semibold text-purple-700 bg-purple-50 border border-purple-200 px-3 py-1 rounded-full">
           <Radio className="w-3.5 h-3.5 text-purple-600 animate-spin" />
-          MONITORING ON
+          {t.statusMonitoring}
         </span>
       );
     }
     return (
       <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
         <span className="w-2 h-2 rounded-full bg-emerald-500" />
-        STATUS: SAFE
+        {t.statusSafe}
       </span>
     );
   };
@@ -95,6 +98,16 @@ const Navbar = ({ onToggleSidebar }) => {
 
           {/* Right: Emergency dial, Notifications, Profile Dropdown */}
           <div className="flex items-center gap-2.5">
+            {/* Language Switcher Pill */}
+            <button
+              onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold transition shadow-sm"
+              title="Switch Language / भाषा बदलें"
+            >
+              <Languages className="w-3.5 h-3.5 text-purple-700" />
+              <span>{language === 'en' ? 'हिंदी' : 'English'}</span>
+            </button>
+
             {/* Quick Helpline Hotline button */}
             <a
               href="tel:112"

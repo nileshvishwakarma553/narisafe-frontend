@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Shield, ShieldCheck, ShieldAlert, Radio, CheckCircle, Info } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const SafetyStatusCard = () => {
   const { user, updateSafetyStatus } = useAuth();
+  const { t } = useLanguage();
   const [updating, setUpdating] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState('');
 
@@ -12,8 +14,8 @@ const SafetyStatusCard = () => {
   const statuses = [
     {
       id: 'safe',
-      label: 'Safe',
-      description: 'You are in a safe, secure environment.',
+      label: t.statusSafe,
+      description: t.statusSafeDesc,
       icon: ShieldCheck,
       color: 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100',
       activeColor: 'bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-400',
@@ -21,8 +23,8 @@ const SafetyStatusCard = () => {
     },
     {
       id: 'monitoring_active',
-      label: 'Monitoring Active',
-      description: 'Guardians receive continuous live location pings.',
+      label: t.statusMonitoring,
+      description: t.statusMonitoringDesc,
       icon: Radio,
       color: 'bg-purple-50 text-purple-700 border-purple-300 hover:bg-purple-100',
       activeColor: 'bg-purple-700 text-white border-purple-700 ring-2 ring-purple-400',
@@ -30,8 +32,8 @@ const SafetyStatusCard = () => {
     },
     {
       id: 'emergency_active',
-      label: 'Emergency Active',
-      description: 'Immediate threat detected. High priority alert.',
+      label: t.statusEmergency,
+      description: t.statusEmergencyDesc,
       icon: ShieldAlert,
       color: 'bg-red-50 text-red-700 border-red-300 hover:bg-red-100',
       activeColor: 'bg-red-600 text-white border-red-600 ring-2 ring-red-400 animate-pulse',

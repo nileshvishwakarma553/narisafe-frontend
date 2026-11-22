@@ -15,6 +15,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import SafetyStatusCard from '../components/SafetyStatusCard';
 import SOSButton from '../components/SOSButton';
 import InteractiveMap from '../components/InteractiveMap';
@@ -23,6 +24,7 @@ import api from '../services/api';
 
 const UserDashboard = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [contacts, setContacts] = useState([]);
   const [guardians, setGuardians] = useState([]);
   const [recentIncidents, setRecentIncidents] = useState([]);
@@ -95,13 +97,13 @@ const UserDashboard = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-purple-900 via-purple-800 to-violet-900 rounded-3xl p-6 sm:p-8 text-white shadow-soft-md">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-purple-200 text-xs font-semibold backdrop-blur-md mb-2">
-            <Shield className="w-3.5 h-3.5 text-purple-300" /> NariSafe Emergency Shield Active
+            <Shield className="w-3.5 h-3.5 text-purple-300" /> {t.brandName} • {t.shieldVersion}
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Welcome back, {user?.name || 'Citizen'}!
+            {t.welcomeBack}, {user?.name || 'Citizen'}!
           </h1>
           <p className="text-xs sm:text-sm text-purple-200 mt-1 max-w-xl">
-            Your real-time women safety hub. One-tap emergency dispatch, connected guardians, and safer route intelligence are ready.
+            {t.dashboardSubtitle}
           </p>
         </div>
 
@@ -110,7 +112,7 @@ const UserDashboard = () => {
             to="/live-location"
             className="px-4 py-2.5 rounded-2xl bg-white/15 hover:bg-white/20 text-white font-semibold text-xs backdrop-blur-md border border-white/20 transition flex items-center gap-2"
           >
-            <Radio className="w-4 h-4 text-emerald-400 animate-pulse" /> Live Tracking
+            <Radio className="w-4 h-4 text-emerald-400 animate-pulse" /> {t.btnShareLive}
           </Link>
           <a
             href="tel:112"

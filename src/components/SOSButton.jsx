@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, Phone, Navigation, ShieldCheck, X, Volume2, Send } from 'lucide-react';
 import { getRealLocation } from '../utils/locationHelper';
+import { useLanguage } from '../context/LanguageContext';
 import api from '../services/api';
 
 const SOSButton = ({ onSOSTriggered, size = 'large' }) => {
+  const { t } = useLanguage();
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdown, setCountdown] = useState(3);
   const [loading, setLoading] = useState(false);
@@ -90,7 +92,7 @@ const SOSButton = ({ onSOSTriggered, size = 'large' }) => {
           </span>
           {!isSmall && (
             <span className="text-[11px] font-medium tracking-normal text-red-100 opacity-90 mt-0.5">
-              ONE-TAP EMERGENCY
+              {t.sosPressText}
             </span>
           )}
         </button>
@@ -108,10 +110,10 @@ const SOSButton = ({ onSOSTriggered, size = 'large' }) => {
               <span className="text-4xl font-extrabold animate-pulse">{countdown}</span>
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-1">
-              Activating Emergency SOS
+              {t.sosTitle}
             </h3>
             <p className="text-sm text-slate-600 mb-6">
-              Notifying your guardians and emergency contacts with your live GPS location in {countdown} seconds...
+              {t.sosTriggeringIn} {countdown}...
             </p>
 
             <div className="flex flex-col gap-2">
@@ -119,13 +121,13 @@ const SOSButton = ({ onSOSTriggered, size = 'large' }) => {
                 onClick={executeSOS}
                 className="w-full py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md transition"
               >
-                <Send className="w-4 h-4" /> Trigger Immediately
+                <Send className="w-4 h-4" /> {t.btnSendAlertSMS}
               </button>
               <button
                 onClick={handleCancelCountdown}
                 className="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm flex items-center justify-center gap-2 transition"
               >
-                <X className="w-4 h-4" /> Cancel (False Alarm)
+                <X className="w-4 h-4" /> {t.sosCancelBtn}
               </button>
             </div>
           </div>
@@ -143,7 +145,7 @@ const SOSButton = ({ onSOSTriggered, size = 'large' }) => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-red-600">
-                    🚨 SOS EMERGENCY ACTIVE
+                    {t.sosActiveAlert}
                   </h3>
                   <p className="text-xs text-slate-500">
                     Dispatched at {new Date().toLocaleTimeString()}
@@ -163,7 +165,7 @@ const SOSButton = ({ onSOSTriggered, size = 'large' }) => {
                 Guardians & Emergency Services Alerted
               </p>
               <p className="text-sm text-slate-700">
-                Your live location coordinates have been broadcast to your registered guardians. Stay calm and use the direct call buttons below.
+                {t.sosActiveDesc}
               </p>
             </div>
 
@@ -175,7 +177,7 @@ const SOSButton = ({ onSOSTriggered, size = 'large' }) => {
               >
                 <span className="flex items-center gap-3">
                   <Phone className="w-5 h-5" />
-                  Call Police Emergency (112)
+                  {t.callPolice112}
                 </span>
                 <span className="text-xs bg-red-700 px-2.5 py-1 rounded-full uppercase">Instant Dial</span>
               </a>
@@ -186,7 +188,7 @@ const SOSButton = ({ onSOSTriggered, size = 'large' }) => {
               >
                 <span className="flex items-center gap-3">
                   <Phone className="w-5 h-5" />
-                  Call Women in Distress (1091)
+                  {t.callWomenHelpline}
                 </span>
                 <span className="text-xs bg-purple-800 px-2 py-0.5 rounded-full">24x7 Help</span>
               </a>

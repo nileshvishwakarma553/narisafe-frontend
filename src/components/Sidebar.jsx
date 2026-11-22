@@ -15,37 +15,39 @@ import {
   LifeBuoy,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   if (!user) return null;
 
   const role = user.role || 'user';
 
   // Navigation Items per role
   const userNavItems = [
-    { label: 'Overview', to: '/dashboard', icon: LayoutDashboard },
-    { label: 'Emergency Contacts', to: '/contacts', icon: Users },
-    { label: 'Live Location Sharing', to: '/live-location', icon: Radio },
-    { label: 'Safer Route Finder', to: '/safer-routes', icon: Route },
-    { label: 'Nearby Safe Places', to: '/safe-places', icon: MapPin },
-    { label: 'Report Incident', to: '/report-incident', icon: AlertTriangle },
-    { label: 'Helpline Directory', to: '/helplines', icon: PhoneCall },
+    { label: t.navOverview, to: '/dashboard', icon: LayoutDashboard },
+    { label: t.navContacts, to: '/contacts', icon: Users },
+    { label: t.navLiveLocation, to: '/live-location', icon: Radio },
+    { label: t.navSaferRoutes, to: '/safer-routes', icon: Route },
+    { label: t.navSafePlaces, to: '/safe-places', icon: MapPin },
+    { label: t.navReportIncident, to: '/report-incident', icon: AlertTriangle },
+    { label: t.navHelplines, to: '/helplines', icon: PhoneCall },
   ];
 
   const guardianNavItems = [
-    { label: 'Guardian Dashboard', to: '/guardian/dashboard', icon: Shield },
-    { label: 'Manage Invitations', to: '/guardian/invitations', icon: UserCheck },
-    { label: 'Nearby Safe Places', to: '/safe-places', icon: MapPin },
-    { label: 'Helpline Directory', to: '/helplines', icon: PhoneCall },
+    { label: t.navGuardianDashboard, to: '/guardian/dashboard', icon: Shield },
+    { label: t.navGuardianInvites, to: '/guardian/invitations', icon: UserCheck },
+    { label: t.navSafePlaces, to: '/safe-places', icon: MapPin },
+    { label: t.navHelplines, to: '/helplines', icon: PhoneCall },
   ];
 
   const adminNavItems = [
-    { label: 'Admin Dashboard', to: '/admin/dashboard', icon: LayoutDashboard },
-    { label: 'Incident Review Pipeline', to: '/admin/incidents', icon: FileText },
-    { label: 'Safety Analytics & Heatmap', to: '/admin/analytics', icon: BarChart3 },
-    { label: 'User Directory', to: '/admin/users', icon: Users },
-    { label: 'Manage Helplines', to: '/admin/helplines', icon: PhoneCall },
+    { label: t.navAdminDashboard, to: '/admin/dashboard', icon: LayoutDashboard },
+    { label: t.navIncidentPipeline, to: '/admin/incidents', icon: FileText },
+    { label: t.navSafetyAnalytics, to: '/admin/analytics', icon: BarChart3 },
+    { label: t.navUserDirectory, to: '/admin/users', icon: Users },
+    { label: t.navManageHelplines, to: '/admin/helplines', icon: PhoneCall },
   ];
 
   const navItems = role === 'admin' ? adminNavItems : role === 'guardian' ? guardianNavItems : userNavItems;
@@ -70,8 +72,8 @@ const Sidebar = ({ isOpen, onClose }) => {
           {/* Role badge */}
           <div className="px-3 py-2 rounded-2xl bg-purple-50/80 border border-purple-100 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold text-purple-600 uppercase tracking-wider">Active Workspace</p>
-              <p className="text-xs font-bold text-purple-900 capitalize">{role} Console</p>
+              <p className="text-[10px] font-bold text-purple-600 uppercase tracking-wider">{t.workspace}</p>
+              <p className="text-xs font-bold text-purple-900 capitalize">{role} {t.console}</p>
             </div>
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           </div>

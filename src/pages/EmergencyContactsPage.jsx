@@ -15,9 +15,13 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { getRealLocation } from '../utils/locationHelper';
 
 const EmergencyContactsPage = () => {
+  const { user } = useAuth();
+  const { language, t } = useLanguage();
   const [contacts, setContacts] = useState([]);
   const [guardians, setGuardians] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +48,10 @@ const EmergencyContactsPage = () => {
       const cleanPhone = (contact.phone || '').replace(/[^0-9+]/g, '');
       const loc = await getRealLocation();
       const mapsUrl = `https://maps.google.com/?q=${loc.lat},${loc.lng}`;
-      const message = `🚨 EMERGENCY ALERT from NariSafe!\nI need urgent help.\nMy live location: ${mapsUrl} (${loc.address || 'GPS coordinates'})\nPlease assist immediately.`;
+      
+      // Use localized SMS message according to user language preference (Hindi or English)
+      const senderName = user?.name || '';
+      const message = t.smsEmergencyBody(senderName, mapsUrl, loc.address);
       const encodedMsg = encodeURIComponent(message);
 
       // Detect if user is on iOS, Android, or Desktop
@@ -67,7 +74,10 @@ const EmergencyContactsPage = () => {
       console.error('Failed to trigger SMS dispatch:', e);
       // Fallback: standard SMS protocol
       const cleanPhone = (contact.phone || '').replace(/[^0-9+]/g, '');
-      window.location.href = `sms:${cleanPhone}?body=${encodeURIComponent('EMERGENCY: I need urgent help. Please contact me.')}`;
+      const fallbackMsg = language === 'hi' 
+        ? '🚨 नारीसेफ आपातकालीन अलर्ट: मुझे तुरंत सहायता चाहिए। कृपया मुझे संपर्क करें।'
+        : 'EMERGENCY: I need urgent help. Please contact me.';
+      window.location.href = `sms:${cleanPhone}?body=${encodeURIComponent(fallbackMsg)}`;
     }
   };
 
@@ -205,10 +215,10 @@ const EmergencyContactsPage = () => {
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
             <Users className="w-6 h-6 text-purple-700" />
-            Emergency Contacts & Guardian Network
+            {t.contactsTitle}
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Manage your personal lifeline. These contacts receive immediate SOS notifications and live coordinates.
+            {t.contactsSubtitle}
           </p>
         </div>
 
@@ -217,13 +227,13 @@ const EmergencyContactsPage = () => {
             onClick={() => setInviteModalOpen(true)}
             className="px-4 py-2.5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition flex items-center gap-1.5"
           >
-            <UserCheck className="w-4 h-4" /> Invite App Guardian
+            <UserCheck className="w-4 h-4" /> {t.btnInviteGuardian}
           </button>
           <button
             onClick={() => handleOpenAddModal()}
             className="px-4 py-2.5 rounded-2xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5"
           >
-            <Plus className="w-4 h-4" /> Add Emergency Contact
+            <Plus className="w-4 h-4" /> {t.btnAddContact}
           </button>
         </div>
       </div>
@@ -239,23 +249,23 @@ const EmergencyContactsPage = () => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-            Direct Emergency Contacts ({contacts.length})
+            {t.directContactsCount} ({contacts.length})
           </h2>
-          <span className="text-xs text-slate-500">Accessible for 1-Tap Calling & SMS</span>
+          <span className="text-xs text-slate-500">{t.accessibleForCalling}</span>
         </div>
 
         {contacts.length === 0 ? (
           <div className="p-10 rounded-3xl bg-white border border-slate-100 shadow-soft-sm text-center">
             <Heart className="w-10 h-10 mx-auto text-purple-300 mb-3" />
-            <h3 className="text-base font-bold text-slate-900">No emergency contacts configured yet</h3>
+            <h3 className="text-base font-bold text-slate-900">{t.noContactsYet}</h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
-              Add at least one trusted primary contact who can be reached immediately during emergencies.
+              {t.noContactsSub}
             </p>
             <button
               onClick={() => handleOpenAddModal()}
               className="px-4 py-2 rounded-xl bg-purple-700 text-white font-bold text-xs"
             >
-              Add First Contact
+              {t.addFirstContact}
             </button>
           </div>
         ) : (
@@ -274,7 +284,7 @@ const EmergencyContactsPage = () => {
                     </span>
                     {contact.isPrimary && (
                       <span className="flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                        <Star className="w-3 h-3 fill-amber-500 text-amber-500" /> Primary
+                        <Star className="w-3 h-3 fill-amber-500 text-amber-500" /> {t.primaryBadge}
                       </span>
                     )}
                   </div>
@@ -291,7 +301,7 @@ const EmergencyContactsPage = () => {
                       className="p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition flex items-center gap-1.5"
                       title="Direct Call"
                     >
-                      <Phone className="w-3.5 h-3.5" /> Call
+                      <Phone className="w-3.5 h-3.5" /> {t.btnCall}
                     </a>
                     <button
                       type="button"
@@ -299,7 +309,7 @@ const EmergencyContactsPage = () => {
                       className="p-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition flex items-center gap-1.5 border border-rose-200"
                       title="Send Instant Emergency SMS & Live Location"
                     >
-                      <Send className="w-3.5 h-3.5" /> SMS / Alert
+                      <Send className="w-3.5 h-3.5" /> {t.btnSendAlertSMS}
                     </button>
                   </div>
 
